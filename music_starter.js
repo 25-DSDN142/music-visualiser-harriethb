@@ -1,3 +1,4 @@
+
 // Variables
 let cols = 8;
 let rows = 6;
@@ -6,13 +7,23 @@ let angle = 0; // for orbiting shapes
 let blackCol = [0,0,0];
 let whiteCol = [255,255,255];
 let orangeAlpha = [244,161,39,50];
+let stars = [];
+let moonCol = [220, 220, 255];
+let moonPos;
+
+
+
 
 // 3 minutes at ~60fps = 10800 frames
 let songFrames = 10800;
 
+
+
+
 function setup() {
 createCanvas(640, 480);
 }
+
 
 function draw_one_frame(words, vocal, drum, bass, other, counter) {
  // --- Progress through song (0 → 1) ---
@@ -24,6 +35,25 @@ function draw_one_frame(words, vocal, drum, bass, other, counter) {
  let bgNight = color(30, 20, 60);
  let bgCol = lerpColor(bgMusic, bgNight, progress);
  background(bgCol);
+
+
+// --- Stars fade in after halfway ---
+if (progress > 0.5) {
+ if (stars.length < 150) { // limit number of stars
+   stars.push(createVector(random(width), random(height/2)));
+ }
+
+
+ for (let i = 0; i < stars.length; i++) {
+   let s = stars[i];
+   // twinkle with vocals or 'other'
+   let twinkle = map(other, 0, 100, 150, 255);
+   let size = random(1, 3);
+   noStroke();
+   fill(255, 255, 255, twinkle);
+   ellipse(s.x, s.y, size, size);
+ }
+}
 
 
  // --- Circle colour (with fade to night) ✨ ---
@@ -115,6 +145,43 @@ function draw_one_frame(words, vocal, drum, bass, other, counter) {
  }
 
 
+// --- Moon rises from halfway (progress > 0.5) ---
+if (progress > 0.5) {
+ let moonProgress = map(progress, 0.5, 1, 0, 1, true);
+
+
+ // Path: from bottom-right → top-left
+ let moonX = map(moonProgress, 0, 1, width + 100, width * 0.2);
+ let moonY = map(moonProgress, 0, 1, height + 100, height * 0.2);
+
+
+ // Pulse with vocals for smoother breathing effect
+ let baseMoonSize = 140;
+ let pulse = map(vocal, 0, 100, -25, 40);
+ let moonSize = baseMoonSize + pulse;
+
+
+ // Halo effect (rings with fading alpha)
+ for (let r = 6; r >= 1; r--) {
+   let haloSize = moonSize * (1 + r * 0.25);
+   let alpha = map(r, 6, 1, 20, 120);
+   noStroke();
+   fill(moonCol[0], moonCol[1], moonCol[2], alpha);
+   ellipse(moonX, moonY, haloSize, haloSize);
+ }
+
+
+ // Actual moon core
+ noStroke();
+ fill(lerpColor(color(200,200,255), color(255,240,200), vocal/100));
+ ellipse(moonX, moonY, moonSize, moonSize);
+
+
+ // Store moon position for stars to use
+ moonPos = createVector(moonX, moonY);
+}
+
+
  // --- Horizon stripes ---
  let bassShift = map(bass, 0, 100, -50, 50);
  for (let i = 0; i < 5; i++) {
@@ -127,13 +194,20 @@ function draw_one_frame(words, vocal, drum, bass, other, counter) {
  }
 
 
- // --- lyric display ---
- fill(whiteCol);
- stroke(whiteCol);
- textFont('Cascadia Code');
- textAlign(CENTER);
- textStyle(BOLD);
- textSize(40);
- text(words, width/2, height*5/6);
- noStroke();
+// --- Lyric display (pulsing + colour-matched to grid) ---
+let lyricBaseSize = 50;  // bigger than before
+let lyricPulse = map(vocal, 0, 100, -10, 25); // pulse with vocals
+let lyricSize = lyricBaseSize + lyricPulse;
+
+
+fill(circleCol);   // same colour as grid/halos
+noStroke();
+textFont('Cascadia Code');
+textAlign(CENTER);
+textStyle(BOLD);
+textSize(lyricSize);
+text(words, width/2, height * 11/12);
+
+
 }
+
