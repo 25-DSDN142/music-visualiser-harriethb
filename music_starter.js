@@ -120,14 +120,4 @@ function draw_one_frame(words, vocal, drum, bass, other, counter) {
    rect(0, stripeY, width, 25);
  }
 
-
- // --- lyric display ---
- fill(whiteCol);
- stroke(whiteCol);
- textFont('Cascadia Code');
- textAlign(CENTER);
- textStyle(BOLD);
- textSize(40);
- text(words, width/2, height*5/6);
- noStroke();
 }
