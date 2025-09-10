@@ -1,4 +1,3 @@
-
 // Variables
 let cols = 8;
 let rows = 6;
@@ -11,24 +10,16 @@ let stars = [];
 let moonCol = [220, 220, 255];
 let moonPos;
 
-
-
-
 // 3 minutes at ~60fps = 10800 frames
 let songFrames = 10800;
-
-
-
 
 function setup() {
 createCanvas(640, 480);
 }
 
-
 function draw_one_frame(words, vocal, drum, bass, other, counter) {
  // --- Progress through song (0 → 1) ---
  let progress = constrain(counter / songFrames, 0, 1);
-
 
  // --- Background colour ---
  let bgMusic = color(152, map(vocal, 0, 100, 180, 230), 180);
@@ -36,13 +27,11 @@ function draw_one_frame(words, vocal, drum, bass, other, counter) {
  let bgCol = lerpColor(bgMusic, bgNight, progress);
  background(bgCol);
 
-
 // --- Stars fade in after halfway ---
 if (progress > 0.5) {
  if (stars.length < 150) { // limit number of stars
    stars.push(createVector(random(width), random(height/2)));
  }
-
 
  for (let i = 0; i < stars.length; i++) {
    let s = stars[i];
@@ -55,14 +44,12 @@ if (progress > 0.5) {
  }
 }
 
-
- // --- Circle colour (with fade to night) ✨ ---
+ // --- Circle colour (with fade to night) ---
  let brightCol = lerpColor(color(255, 100, 100), color(255, 255, 0), map(vocal, 0, 100, 0, 1));
  let darkCol   = color(120, 100, 80);
  let circleCol = lerpColor(brightCol, darkCol, progress);
 
-
- // --- Grid of stripey + solid circles ✨ ---
+ // --- Grid of stripey + solid circles ---
  let spacingX = width / (cols + 1);
  let spacingY = height / (rows + 1);
 
@@ -129,7 +116,7 @@ if (progress > 0.5) {
  ellipse(sunX, sunY, sunSize, sunSize);
 
 
- // --- Sun rings (darken over time) ✨ ---
+ // --- Sun rings (darken over time) ---
  let stripeStart = color(255, 180, 80, 80);
  let stripeEnd   = color(100, 50, 30, 60);
  let stripeCol   = lerpColor(stripeStart, stripeEnd, progress);
@@ -170,17 +157,12 @@ if (progress > 0.5) {
    ellipse(moonX, moonY, haloSize, haloSize);
  }
 
-
  // Actual moon core
  noStroke();
  fill(lerpColor(color(200,200,255), color(255,240,200), vocal/100));
  ellipse(moonX, moonY, moonSize, moonSize);
 
-
- // Store moon position for stars to use
- moonPos = createVector(moonX, moonY);
 }
-
 
  // --- Horizon stripes ---
  let bassShift = map(bass, 0, 100, -50, 50);
@@ -192,7 +174,6 @@ if (progress > 0.5) {
    fill(stripeCol);
    rect(0, stripeY, width, 25);
  }
-
 
 // --- Lyric display (pulsing + colour-matched to grid) ---
 let lyricBaseSize = 50;  // bigger than before
@@ -208,6 +189,4 @@ textStyle(BOLD);
 textSize(lyricSize);
 text(words, width/2, height * 11/12);
 
-
 }
-
